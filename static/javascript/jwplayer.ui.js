@@ -232,7 +232,6 @@
         },
 		setSize: function(h,w) {
 			jwplayer(this.options.id).resize(w,h);
-			this.element.width(w);
 		}
 
     };
