@@ -47,7 +47,7 @@
             endLive: null,
             /* seconds */
             startPlay: null,
-			liveclock: null
+            liveclock: null
         },
         /*
         * UCEngine events listening
@@ -230,9 +230,9 @@
             this.element.find('*').remove();
             $.Widget.prototype.destroy.apply(this, arguments); // default destroy
         },
-		setSize: function(h,w) {
-			jwplayer(this.options.id).resize(w,h);
-		}
+        setSize: function(h,w) {
+            jwplayer(this.options.id).resize(w,h);
+        }
 
     };
     
