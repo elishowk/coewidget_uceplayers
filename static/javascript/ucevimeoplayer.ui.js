@@ -242,7 +242,6 @@ $.uce.VimeoPlayer.prototype = {
             $("#"+id).height(h);
             $("#"+id).width(w);
         });
-        this.element.width(w);
     }
 };
 
