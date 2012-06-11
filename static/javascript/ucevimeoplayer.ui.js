@@ -52,7 +52,7 @@ $.uce.VimeoPlayer.prototype = {
         },
         /* seconds */
         defaultTime: 0,
-        defaultDuration: 72000,
+        defaultDuration: 7200,
         /* number */
         defaultPercent: 0,
         isLive: null,
@@ -70,21 +70,30 @@ $.uce.VimeoPlayer.prototype = {
         "livemanager.live.open"     : "_updateOpen",
         "livemanager.live.close"    : "_updateClose"
     },
-        
+    /*
+     * Sets playback variables to :
+     * 1- defaults
+     * 2- if player already "ready", to api returned values
+     * 2- else binds to the "onready" event
+     */
     _create: function() {
         vimeoPlayerState.seconds = this.options.defaultTime;
         vimeoPlayerState.duration = this.options.defaultDuration;
         vimeoPlayerState.percent = this.options.defaultPercent;
         vimeoPlayerState.startPlay = this.options.startPlay;
+        this.ready(this.options.id);
         $f(this.options.id).addEvent('ready', this.ready);
+        $(window).trigger('resize');
     },
 
     ready: function(player_id) {
-        $(window).trigger('resize');
+	$f(player_id).api("getDuration", function(data){
+            vimeoPlayerState.duration = parseInt( data, 10 );
+        });
         $f(player_id).addEvent('playProgress', function(data) {
+            vimeoPlayerState.duration = parseInt( data.duration, 10);
             vimeoPlayerState.seconds = parseInt( data.seconds, 10);
             vimeoPlayerState.percent = parseInt( data.percent, 10);
-            vimeoPlayerState.duration = parseInt( data.duration, 10);
         });
         if( typeof vimeoPlayerState.startPlay === "number" ) {
             $f(player_id).api("seekTo", vimeoPlayerState.startPlay);
