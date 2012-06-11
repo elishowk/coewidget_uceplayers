@@ -238,10 +238,8 @@ $.uce.VimeoPlayer.prototype = {
         $.Widget.prototype.destroy.apply(this, arguments); // default destroy
     },
     setSize: function(h,w) {
-        $f(this.options.id).addEvent('ready', function(id) {
-            $("#"+id).height(h);
-            $("#"+id).width(w);
-        });
+        $("#"+this.options.id).height(h);
+        $("#"+this.options.id).width(w);
     }
 };
 
