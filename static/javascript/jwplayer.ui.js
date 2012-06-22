@@ -73,8 +73,6 @@
         _updateOpen: function(event) {
             if(event.metadata.unixtime) {    
                 this.options.startLive = event.metadata.unixtime;
-            } else {
-                this.options.startLive = event.datetime;
             }
             this.options.endLive = null;
             //TODO replace volume jwplayer(this.options.id).getPlugin("controlbar").hide(); 
@@ -83,8 +81,6 @@
         _updateClose: function(event) {
             if(event.metadata.unixtime) {    
                 this.options.endLive = event.metadata.unixtime;
-            } else {
-                this.options.endLive = event.datetime;
             }
         },
         /* 
