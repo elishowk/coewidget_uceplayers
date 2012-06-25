@@ -123,8 +123,6 @@ $.uce.VimeoPlayer.prototype = {
     _updateOpen: function(event) {
         if(event.metadata.unixtime) {    
             this.options.startLive = event.metadata.unixtime;
-        } else {
-            this.options.startLive = event.datetime;
         }
         this.options.endLive = null;
     },
@@ -132,8 +130,6 @@ $.uce.VimeoPlayer.prototype = {
     _updateClose: function(event) {
         if(event.metadata.unixtime) {    
             this.options.endLive = event.metadata.unixtime;
-        } else {
-            this.options.endLive = event.datetime;
         }
     },
 
@@ -198,6 +194,11 @@ $.uce.VimeoPlayer.prototype = {
         if (this.options.isLive === false) {
             return vimeoPlayerState.seconds;
         } else if (typeof this.options.startLive === "number") {
+            if(typeof this.options.endLive === "number") {
+                if(this.options.liveclock.getLiveClock() - this.options.endLive > 0) {
+                    return 0;
+                }
+            }
             var relativeTime = (this.options.liveclock.getLiveClock() - this.options.startLive)/1000;
             if(relativeTime >= 0) {
                 return Math.round(relativeTime);
