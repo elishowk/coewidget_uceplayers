@@ -194,6 +194,11 @@ $.uce.VimeoPlayer.prototype = {
         if (this.options.isLive === false) {
             return vimeoPlayerState.seconds;
         } else if (typeof this.options.startLive === "number") {
+            if(typeof this.options.endLive === "number") {
+                if(this.options.liveclock.getLiveClock() - this.options.endLive > 0) {
+                    return 0;
+                }
+            }
             var relativeTime = (this.options.liveclock.getLiveClock() - this.options.startLive)/1000;
             if(relativeTime >= 0) {
                 return Math.round(relativeTime);

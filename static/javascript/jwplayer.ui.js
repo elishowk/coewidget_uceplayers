@@ -125,13 +125,18 @@
 
         /*
         * Returns seconds elapsed since the beginning of the video
+        * Replaces video time by server time for a live
         */
         getCurrentTime: function() {
             if (this.options.player){
                 if (this.options.isLive === false) {
                     return Math.round( this.options.player.getPosition() );
-            
                 } else if (typeof this.options.startLive === "number") {
+                    if(typeof this.options.endLive === "number") {
+                        if(this.options.liveclock.getLiveClock() - this.options.endLive > 0) {
+                            return 0;
+                        }
+                    }
                     var relativeTime = (this.options.liveclock.getLiveClock() - this.options.startLive)/1000;
                     if(relativeTime >= 0) {
                         return Math.round(relativeTime);
