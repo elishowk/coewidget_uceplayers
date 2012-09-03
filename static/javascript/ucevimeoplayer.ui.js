@@ -29,9 +29,11 @@ var vimeoPlayerState = {
     seconds: null,
     percent: null,
     duration: null,
+    loadPercent: null,
     callbacks: {
         onPlay: [],
-        onPause: []
+        onPause: [],
+        seek: function(id) { return;}
     }
 };
 
@@ -87,7 +89,7 @@ $.uce.VimeoPlayer.prototype = {
     },
 
     ready: function(player_id) {
-	$f(player_id).api("getDuration", function(data){
+        $f(player_id).api("getDuration", function(data){
             vimeoPlayerState.duration = parseInt( data, 10 );
         });
         $f(player_id).addEvent('playProgress', function(data) {
@@ -157,29 +159,23 @@ $.uce.VimeoPlayer.prototype = {
             val = parseInt(val, 10);
         }
         vimeoPlayerState.seekTo = val;
-        vimeoPlayerState.callback = this._seekTo;
+        vimeoPlayerState.callbacks.seek = this._seekTo;
         $f(this.options.id).addEvent('ready', function(id) {
             if($f(id).api("paused")) {
                 $f(id).api("play");
             }
-            $f(id).addEvent("loadProgress", function(data, id) {
-                if(vimeoPlayerState.seekTo === null ) {
-                    $f(id).removeEvent("loadProgress");
-                    return;
-                }
-                vimeoPlayerState.callback(id);
-            });
+            vimeoPlayerState.callbacks.seek(id);
         });
     },
     /*
      * _seekTo callback
      * froogaloop seek event is used to monitor the seek api call
+     * flash based player won't seek if it hasn't not loaded enough bits
+     * FIXME seek event never reached when seek > duration => possible endless listener
      */
     _seekTo: function(id) {
         $f(id).addEvent("seek", function(data) {
             if(Math.abs(Math.round(parseInt(data.seconds, 10)) - vimeoPlayerState.seekTo) < 2) {
-                // FIXME not reached when seek > duration
-                //console.log("seek point reached");
                 vimeoPlayerState.seekTo = null;
                 $f(id).removeEvent("seek");
             }
