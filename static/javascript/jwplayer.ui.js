@@ -56,7 +56,7 @@
             "livemanager.live.open"     : "_updateOpen",
             "livemanager.live.close"    : "_updateClose"
         },
-        _seekQueue: [],
+        _seekQueue: null,
             
         _create: function() {
             if(jwplayer(this.options.id)) {
@@ -87,7 +87,7 @@
         * I just want it to pause never stop
         */
         stop : function() {
-            this.pause();
+            jwplayer(this.options.id).play(false);
         },
         pause : function() {
             jwplayer(this.options.id).play(false);
@@ -98,24 +98,27 @@
         },
         
         /*
-        * seek time in seconds now or after onMeta callback
+        * seek time in seconds
         */
         seek: function(seekseconds) {
             if(typeof seekseconds === "string") {
                 seekseconds = parseInt(seekseconds, 10);
             }
-            if(typeof seekseconds === "object") {
+            if(typeof seekseconds === "number") {
                 // it's an callback
-                seekseconds = this._seekQueue.shift();
+                seekseconds = this._seekQueue;
+                this._seekQueue = null;
             }
             if(seekseconds<0 || seekseconds===undefined) {
                 return;
             }
             var duration = this.getDuration();
             if(duration===undefined || duration<0){
-                this._seekQueue.push(seekseconds);
-                this.onPlay($.proxy(this.seek, this));
-                jwplayer(this.options.id).play(true);
+                this._seekQueue = seekseconds;
+                this.onBuffer($.proxy(this.seek, this));
+                if(jwplayer(this.options.id).getState() !== "PLAYING") {
+                    jwplayer(this.options.id).play(true);
+                }
                 return;
             }
             if(seekseconds <= duration) {
